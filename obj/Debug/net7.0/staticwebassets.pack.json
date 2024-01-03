@@ -1,0 +1,25 @@
+{
+  "Files": [
+    {
+      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/avatars/5f5e025b-fbb1-4608-b59b-cb7023787e3c.png",
+      "PackagePath": "staticwebassets/avatars/5f5e025b-fbb1-4608-b59b-cb7023787e3c.png"
+    },
+    {
+      "Id": "obj/Debug/net7.0/staticwebassets/msbuild.BiblioServer.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj/Debug/net7.0/staticwebassets/msbuild.build.BiblioServer.props",
+      "PackagePath": "build\\BiblioServer.props"
+    },
+    {
+      "Id": "obj/Debug/net7.0/staticwebassets/msbuild.buildMultiTargeting.BiblioServer.props",
+      "PackagePath": "buildMultiTargeting\\BiblioServer.props"
+    },
+    {
+      "Id": "obj/Debug/net7.0/staticwebassets/msbuild.buildTransitive.BiblioServer.props",
+      "PackagePath": "buildTransitive\\BiblioServer.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

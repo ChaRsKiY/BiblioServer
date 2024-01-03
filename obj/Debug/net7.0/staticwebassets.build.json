@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "Hash": "lmiwn58ZaCPdFdWtkAXh74U+75yURAWno+Lw1FxhtTc=",
+  "Source": "BiblioServer",
+  "BasePath": "_content/BiblioServer",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "BiblioServer/wwwroot",
+      "Source": "BiblioServer",
+      "ContentRoot": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/",
+      "BasePath": "_content/BiblioServer",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/avatars/5f5e025b-fbb1-4608-b59b-cb7023787e3c.png",
+      "SourceId": "BiblioServer",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/",
+      "BasePath": "_content/BiblioServer",
+      "RelativePath": "avatars/5f5e025b-fbb1-4608-b59b-cb7023787e3c.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/avatars/5f5e025b-fbb1-4608-b59b-cb7023787e3c.png"
+    }
+  ]
+}
