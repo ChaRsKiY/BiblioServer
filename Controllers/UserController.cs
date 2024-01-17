@@ -10,93 +10,260 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.StaticFiles;
+using BiblioServer.Services;
+using BiblioServer.Repositories;
+using System.Threading.Tasks;
+using System;
 
 namespace BiblioServer.Controllers;
 
+//User Controller
 [ApiController]
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IRegistrationService _registrationService;
+    private readonly ILoginService _loginService;
+    private readonly IUserProfileService _userProfileService;
+    private readonly IUserRepository _userRepository;
+    private readonly IResetPasswordService _resetPasswordService;
+    private readonly IEmailService _emailService;
+    private readonly IChangeEmailService _changeEmailService;
 
-    public UserController(ApplicationDbContext context)
+    //Connecting/Getting services throw constructor 
+    public UserController(IChangeEmailService changeEmailService, IEmailService emailService, IResetPasswordService resetPasswordService, IRegistrationService registrationService, ILoginService loginService, IUserProfileService userProfileService, IUserRepository userRepository)
     {
-        _context = context;
+        _registrationService = registrationService ?? throw new ArgumentNullException(nameof(registrationService));
+        _loginService = loginService;
+        _userProfileService = userProfileService;
+        _userRepository = userRepository;
+        _resetPasswordService = resetPasswordService;
+        _emailService = emailService;
+        _changeEmailService = changeEmailService;
     }
 
+    //Register Route
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] UserRegistrationModel user)
+    public async Task<IActionResult> StartRegistration([FromBody] UserRegistrationModel user)
     {
-        if (!ModelState.IsValid)
+        var token = await _registrationService.RegisterUserAsync(user);
+
+        if (token == "emailExist")
         {
-            return BadRequest(ModelState);
+            return BadRequest(token);
+        }
+        else if (token == "usernameExist")
+        {
+            return BadRequest(token);
         }
 
-        if (await _context.Users.AnyAsync(x => x.Email == user.Email))
-        {
-            return BadRequest("emailExist");
-        }
-
-        if (await _context.Users.AnyAsync(x => x.UserName == user.UserName))
-        {
-            return BadRequest("usernameExist");
-        }
-
-        string salt = BCrypt.Net.BCrypt.GenerateSalt(12);
-
-        var newUser = new User
-        {
-            UserName = user.UserName,
-            Email = user.Email,
-            Salt = salt,
-            RegistrationDate = DateTime.Now,
-            HashedPassword = HashPassword(user.Password, salt),
-        };
-
-        await _context.Users.AddAsync(newUser);
-        await _context.SaveChangesAsync();
-
-        var token = GenerateJwtToken(newUser);
-
-        return Ok(new { Token = token });
+        return Ok();
     }
 
+    [HttpPost("verifyemail")]
+    public async Task<IActionResult> CompleteRegistration([FromBody] VerificationModel model)
+    {
+        var user = await _userRepository.GetUserByEmailAsync(model.Email);
+
+        if (user == null)
+        {
+            return BadRequest("userExist");
+        }
+
+        if(user.IsVerified)
+        {
+            return BadRequest("alreadyVerified");
+        }
+
+        if(user.VerificationCode != model.VerificationCode)
+        {
+            return BadRequest("invalidVerificationCode");
+        }
+
+        await _registrationService.CompleteRegistration(user);
+
+        return Ok();
+    }
+
+    [HttpPost("resendverificationcode")]
+    public async Task<IActionResult> ResendVerificationCode([FromBody] ResentVerificationModel model)
+    {
+        var user = await _userRepository.GetUserByEmailAsync(model.Email);
+
+        if (user == null)
+        {
+            return BadRequest("userExist");
+        }
+
+        if (user.IsVerified == true)
+        {
+            return BadRequest("alreadyVerified");
+        }
+
+        await _registrationService.ResentVerifyCode(user);
+
+        return Ok();
+    }
+
+    [HttpPost("password-reset-request")]
+    public async Task<IActionResult> RequestPasswordReset([FromBody] PasswordResetRequestModel model)
+    {
+        var token = await _resetPasswordService.GeneratePasswordResetToken(model.Email);
+
+        if (token != "userExist")
+        {
+            _emailService.SendResetPasswordEmail(model.Email, token);
+
+            return Ok();
+        }
+
+        return BadRequest(token);
+    }
+
+    [HttpGet("email-change-request")]
+    [Authorize]
+    public async Task<IActionResult> StartChangingEmail()
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        var user = await _userRepository.GetUserByIdAsync(int.Parse(userId));
+
+        var token = await _changeEmailService.GenerateChangeEmailToken(int.Parse(userId));
+
+        if (token != "userExist")
+        {
+            _emailService.SendEmailChangeCode(user.Email, token);
+
+            return Ok();
+        }
+
+        return BadRequest(token);
+    }
+
+    [HttpPost("email-change")]
+    [Authorize]
+    public async Task<IActionResult> ChangingEmail([FromBody] ChangeEmailModel model)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        var user = await _userRepository.GetUserByIdAsync(int.Parse(userId));
+
+        if(user != null)
+        {
+            var token = await _changeEmailService.CheckTokenAsync(user, model);
+
+            if(token == "invalidCode")
+            {
+                return BadRequest(token);
+            }
+
+            return Ok();
+        }
+
+        return BadRequest("userExist");
+    }
+
+    [HttpPost("email-change-confirm")]
+    public async Task<IActionResult> ConfirmChangingEmail([FromBody] ChangeEmailModel model)
+    {
+        var token = await _changeEmailService.ConfirmChangingEmailAsync(model);
+
+        if (token == "invalidCode")
+        {
+            return BadRequest(token);
+        }
+
+        return Ok();
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel model)
+    {
+        var user = await _userRepository.GetUserByEmailAsync(model.Email);
+
+        if (user != null && user.PasswordResetTokenExpiration > DateTime.UtcNow && model.Token == user.PasswordResetToken)
+        {
+            var newPasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password, user.Salt);
+
+            user.HashedPassword = newPasswordHash;
+            user.PasswordResetToken = null;
+            user.PasswordResetTokenExpiration = null;
+
+            await _userRepository.UpdateUserAsync(user);
+
+            return Ok();
+        }
+
+        return BadRequest();
+    }
+
+    //Login Route
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] UserLoginModel loginModel)
     {
-        if (!ModelState.IsValid)
+        var token = await _loginService.LoginUserAsync(loginModel);
+
+        if (token == "invalidCredentials")
         {
-            return BadRequest(ModelState);
+            return Unauthorized(token);
         }
 
-        var user = await _context.Users.SingleOrDefaultAsync(x => x.Email == loginModel.Email);
-
-        if (user == null || !VerifyPassword(loginModel.Password, user.HashedPassword))
+        if (token == "emailNotVerified")
         {
-            return Unauthorized("�������� ������� ������");
+            return Unauthorized(token);
         }
-
-        var token = GenerateJwtToken(user);
 
         return Ok(new { Token = token });
     }
 
-    [HttpGet("decode")]
-    [Authorize] 
-    public IActionResult DecodeToken()
+    [HttpPut("update-password")]
+    [Authorize]
+    public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordModel updateModel)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var userName = User.FindFirst(ClaimTypes.Name)?.Value;
-        Console.WriteLine(userId);
 
-        if (userId == null || userName == null)
+        var user = await _userRepository.GetUserByIdAsync(int.Parse(userId));
+
+        if(user == null)
         {
-            return BadRequest("Invalid or missing token");
+            return BadRequest("userExist");
         }
 
-        return Ok(new { UserId = userId, UserName = userName });
+        var result = await _userProfileService.UpdatePasswordAsync(int.Parse(userId), updateModel);
+
+        if(result == "invalidOldPassword")
+        {
+            return BadRequest(result);
+        }
+
+        _emailService.SendSuccessfullResetPasswordEmail(user.Email);
+
+        return Ok();
     }
 
+    //Token Decode Route
+    [HttpGet("decode")]
+    [Authorize]
+    public async Task<IActionResult> DecodeToken()
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (userId == null)
+        {
+            return BadRequest("invalidToken");
+        }
+
+        var user = await _userRepository.GetUserByIdAsync(int.Parse(userId));
+
+        if (user == null)
+        {
+            return BadRequest("userExist");
+        }
+
+        return Ok(new { UserId = userId, UserName = user.UserName });
+    }
+
+    //Get User Data Route
     [HttpGet("userdata")]
     [Authorize]
     public async Task<IActionResult> UserData()
@@ -108,28 +275,17 @@ public class UserController : ControllerBase
             return BadRequest("Invalid or missing token");
         }
 
-        var user = await _context.Users
-        .Where(x => x.Id.ToString() == userId)
-        .Select(x => new ProfileUserModel
-        {
-            UserName = x.UserName,
-            Email = x.Email,
-            Name = x.Name,
-            Surname = x.Surname,
-            Bio = x.Bio,
-            Avatar = x.Avatar,
-            RegistrationDate = x.RegistrationDate
-        })
-        .SingleOrDefaultAsync();
+        var userProfile = await _userProfileService.GetUserProfileAsync(int.Parse(userId));
 
-        if (user == null)
+        if (userProfile == null)
         {
             return NotFound("User not found");
         }
 
-        return Ok(user);
+        return Ok(userProfile);
     }
 
+    //Get Avatar Route
     [HttpGet("avatar/{fileName}")]
     public IActionResult GetAvatar(string fileName)
     {
@@ -144,19 +300,10 @@ public class UserController : ControllerBase
         return File(fileStream, GetContentType(fileName));
     }
 
-    private string GetContentType(string fileName)
-    {
-        var provider = new FileExtensionContentTypeProvider();
-        if (!provider.TryGetContentType(fileName, out var contentType))
-        {
-            contentType = "application/octet-stream";
-        }
-        return contentType;
-    }
-
+    //Update User Route
     [HttpPut("update")]
     [Authorize]
-    public async Task<IActionResult> UpdateProfile([FromForm] ProfileUserModel updateModel)
+    public async Task<IActionResult> UpdateProfile([FromForm] UserUpdateModel updateModel)
     {
         try
         {
@@ -167,47 +314,23 @@ public class UserController : ControllerBase
                 return BadRequest("Invalid or missing token");
             }
 
-            var user = await _context.Users.FindAsync(int.Parse(userId));
-
-            if (user == null)
-            {
-                return NotFound("User not found");
-            }
-
-            if (!string.IsNullOrEmpty(updateModel.UserName))
-            {
-                user.UserName = updateModel.UserName;
-            }
-
-            if (!string.IsNullOrEmpty(updateModel.Name))
-            {
-                user.Name = updateModel.Name;
-            }
-
-            if (!string.IsNullOrEmpty(updateModel.Surname))
-            {
-                user.Surname = updateModel.Surname;
-            }
-
-            if (!string.IsNullOrEmpty(updateModel.Bio))
-            {
-                user.Bio = updateModel.Bio;
-            }
-
             if (updateModel.AvatarFile != null)
             {
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(updateModel.AvatarFile.FileName);
-                var filePath = Path.Combine("wwwroot/avatars", fileName);
+                var supportedTypes = new[] { "jpeg", "jpg", "png", "webp", "gif" };
+                var fileExtension = Path.GetExtension(updateModel.AvatarFile.FileName).TrimStart('.');
 
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                if (!supportedTypes.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
                 {
-                    await updateModel.AvatarFile.CopyToAsync(stream);
+                    return BadRequest("InvalidFileType");
                 }
-
-                user.Avatar = fileName; 
             }
 
-            await _context.SaveChangesAsync();
+            var response = await _userProfileService.UpdateUserProfileAsync(int.Parse(userId), updateModel);
+
+            if(response == "usernameExist" || response == "userExist")
+            {
+                return BadRequest(response);
+            }
 
             return Ok();
         }
@@ -217,6 +340,7 @@ public class UserController : ControllerBase
         }
     }
 
+    //Delete User By Token Route 
     [HttpDelete("delete")]
     [Authorize]
     public async Task<IActionResult> DeleteUser()
@@ -230,15 +354,7 @@ public class UserController : ControllerBase
                 return BadRequest("Invalid or missing token");
             }
 
-            var user = await _context.Users.FindAsync(int.Parse(userId));
-
-            if (user == null)
-            {
-                return NotFound("User not found");
-            }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            await _userProfileService.DeleteUserAsync(int.Parse(userId));
 
             return Ok("User deleted successfully");
         }
@@ -248,36 +364,15 @@ public class UserController : ControllerBase
         }
     }
 
-
-    private string HashPassword(string password, string salt)
+    //Function for get avatar route
+    //Returns content type of image
+    private string GetContentType(string fileName)
     {
-        return BCrypt.Net.BCrypt.HashPassword(password, salt);
-    }
-
-    private bool VerifyPassword(string EnteredPassword, string PasswordHash)
-    {
-        return BCrypt.Net.BCrypt.Verify(EnteredPassword, PasswordHash);
-    }
-
-    private string GenerateJwtToken(User user)
-    {
-        var SecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("My_Security_KeyMy_Security_KeyMy_Security_KeyMy_Security_KeyMy_Security_KeyMy_Security_KeyMy_Security_KeyMy_Security_KeyMy_Security_Key"));
-        var Credentials = new SigningCredentials(SecurityKey, SecurityAlgorithms.HmacSha256);
-
-        var claims = new List<Claim>
+        var provider = new FileExtensionContentTypeProvider();
+        if (!provider.TryGetContentType(fileName, out var contentType))
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.UserName),
-        };
-
-        var token = new JwtSecurityToken(
-            issuer: "",
-            audience: "",
-            claims: claims,
-            expires: DateTime.UtcNow.AddHours(72),
-            signingCredentials: Credentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
+            contentType = "application/octet-stream";
+        }
+        return contentType;
     }
 }

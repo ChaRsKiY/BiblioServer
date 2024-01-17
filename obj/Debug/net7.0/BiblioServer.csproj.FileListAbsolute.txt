@@ -216,3 +216,13 @@ C:/Users/mrbla/Source/Repos/Biblio1/BiblioServer/obj/Debug/net7.0/ref/BiblioServ
 /Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/obj/Debug/net7.0/ref/BiblioServer.dll
 /Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/bin/Debug/net7.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
 /Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/bin/Debug/net7.0/BiblioServer.staticwebassets.runtime.json
+/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/bin/Debug/net7.0/BouncyCastle.Cryptography.dll
+/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/bin/Debug/net7.0/MailKit.dll
+/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/bin/Debug/net7.0/MimeKit.dll
+/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/bin/Debug/net7.0/System.Security.Cryptography.Pkcs.dll
+/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/bin/Debug/net7.0/runtimes/win/lib/net7.0/System.Security.Cryptography.Pkcs.dll
+/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/bin/Debug/net7.0/Humanizer.dll
+/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/bin/Debug/net7.0/Microsoft.EntityFrameworkCore.Design.dll
+/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/bin/Debug/net7.0/Microsoft.Extensions.DependencyModel.dll
+/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/bin/Debug/net7.0/Mono.TextTemplating.dll
+/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/bin/Debug/net7.0/System.CodeDom.dll

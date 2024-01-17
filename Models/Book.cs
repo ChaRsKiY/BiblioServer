@@ -3,51 +3,42 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BiblioServer.Models;
 
+//Book model
 public class Book
 {
-    //Ключ книги
     [Key]
     public int Id { get; set; }
 
-    //Название книги
-    [Required]
+    //Book name
     [MaxLength(60)]
-    public string Title { get; set; }
+    public string? Title { get; set; }
 
-    //Автор книги
-    [Required]
     [MaxLength(60)]
-    public string Author { get; set; }
+    public string? Author { get; set; }
 
-    //Жанр книги
-    [ForeignKey("Genre")]
-    public Genre Genre { get; set; }
 
-    //Путь к обложке книги
-    public string CoverImage { get; set; }
 
-    //Описание книги
-    [MaxLength(255)]
-    public string Description { get; set; }
+    [ForeignKey("GenreId")]
+    public int GenreId { get; set; }
 
-    //Оценка
+    public string? CoverImage { get; set; }
+
+    [MaxLength(350)]
+    public string? Description { get; set; }
+
     [Range(0, 10)]
-    public double Rating { get; set; }
+    public double? Rating { get; set; } = 5;
 
-    //Счетчик прочтений книги
-    public int ReadCounter { get; set; }
+    public int? ReadCounter { get; set; }
 
-    //Счетчик загрузок книги
-    public int DownloadCount { get; set; }
+    public int? DownloadCount { get; set; }
 
-    //Дата публикации книги
     [DataType(DataType.Date)]
-    public DateOnly PublicationDate { get; set; }
+    public DateTime? PublicationDate { get; set; }
 
-    //Год выпуска книги
     [DataType(DataType.Date)]
-    public DateOnly Year { get; set; }
+    public DateTime? Year { get; set; }
 
-    //Содержание книги(Не описание)
-    public string Content { get; set; }
+    //Text of the book / Content
+    public string? Content { get; set; }
 }

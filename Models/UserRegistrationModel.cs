@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 namespace BiblioServer.Models;
 
+//Model by signin up
 public class UserRegistrationModel
 {
     [Required]

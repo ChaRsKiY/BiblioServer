@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 namespace BiblioServer.Models;
 
+//Model by signing in
 public class UserLoginModel
 {
     [Required]
