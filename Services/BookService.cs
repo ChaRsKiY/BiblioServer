@@ -61,7 +61,7 @@ namespace BiblioServer.Services
                 Description = book.Description,
                 CoverImage = coverFileName,
                 PublicationDate = DateTime.Now,
-                Content = coverFilePath
+                Content = coverFileName
             };
 
             await _bookRepository.AddBookAsync(newBook);

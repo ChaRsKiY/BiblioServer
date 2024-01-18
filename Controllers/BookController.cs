@@ -150,37 +150,46 @@ public class BookController : ControllerBase
         }
 
         var content = ReadFileContent(filePath, page, pageSize);
+        var totalPages = CalculateTotalPages(filePath, pageSize);
 
         return new
         {
             Content = content,
-            TotalPages = CalculateTotalPages(filePath, pageSize),
+            TotalPages = totalPages,
             CurrentPage = page
         };
     }
 
-    private string ReadFileContent(string filePath, int page, int pageSize)
+    private List<string> ReadFileContent(string filePath, int page, int pageSize)
     {
-        using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-        using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+        var text = System.IO.File.ReadAllText(filePath);
+        var paragraphs = text.Split(new[] { "\r\n\r\n", "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+        var wordsCount = 0;
+        var currentPage = new List<string>();
+        foreach (var paragraph in paragraphs)
         {
-            var fileContent = streamReader.ReadToEnd();
-
-            var words = fileContent.Split(new[] { ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-            var startIndex = (page - 1) * pageSize;
-
-            var wordsOnPage = words.Skip(startIndex).Take(pageSize);
-
-            var result = string.Join(" ", wordsOnPage);
-
-            return result;
+            var words = paragraph.Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var word in words)
+            {
+                if (wordsCount >= (page - 1) * pageSize && wordsCount < page * pageSize)
+                {
+                    if (currentPage.Count == 0 || !currentPage.Last().EndsWith(paragraph))
+                    {
+                        currentPage.Add(paragraph);
+                    }
+                }
+                wordsCount++;
+            }
         }
+
+        return currentPage;
     }
 
     private int CalculateTotalPages(string filePath, int pageSize)
     {
-        var fileSize = new FileInfo(filePath).Length;
-        return (int)Math.Ceiling((double)fileSize / pageSize);
+        var text = System.IO.File.ReadAllText(filePath);
+        var wordCount = text.Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).Length;
+        return (int)Math.Ceiling((double)wordCount / pageSize);
     }
 }
