@@ -14,6 +14,8 @@ using BiblioServer.Services;
 using BiblioServer.Repositories;
 using System.Threading.Tasks;
 using System;
+using System.IO;
+using System.Linq;
 
 namespace BiblioServer.Controllers;
 
@@ -25,18 +27,18 @@ public class UserController : ControllerBase
     private readonly IRegistrationService _registrationService;
     private readonly ILoginService _loginService;
     private readonly IUserProfileService _userProfileService;
-    private readonly IUserRepository _userRepository;
+    private readonly IUserService _userService;
     private readonly IResetPasswordService _resetPasswordService;
     private readonly IEmailService _emailService;
     private readonly IChangeEmailService _changeEmailService;
 
     //Connecting/Getting services throw constructor 
-    public UserController(IChangeEmailService changeEmailService, IEmailService emailService, IResetPasswordService resetPasswordService, IRegistrationService registrationService, ILoginService loginService, IUserProfileService userProfileService, IUserRepository userRepository)
+    public UserController(IChangeEmailService changeEmailService, IEmailService emailService, IResetPasswordService resetPasswordService, IRegistrationService registrationService, ILoginService loginService, IUserProfileService userProfileService, IUserService userService)
     {
         _registrationService = registrationService ?? throw new ArgumentNullException(nameof(registrationService));
         _loginService = loginService;
         _userProfileService = userProfileService;
-        _userRepository = userRepository;
+        _userService = userService;
         _resetPasswordService = resetPasswordService;
         _emailService = emailService;
         _changeEmailService = changeEmailService;
@@ -63,7 +65,7 @@ public class UserController : ControllerBase
     [HttpPost("verifyemail")]
     public async Task<IActionResult> CompleteRegistration([FromBody] VerificationModel model)
     {
-        var user = await _userRepository.GetUserByEmailAsync(model.Email);
+        var user = await _userService.GetUserByEmail(model.Email);
 
         if (user == null)
         {
@@ -88,7 +90,7 @@ public class UserController : ControllerBase
     [HttpPost("resendverificationcode")]
     public async Task<IActionResult> ResendVerificationCode([FromBody] ResentVerificationModel model)
     {
-        var user = await _userRepository.GetUserByEmailAsync(model.Email);
+        var user = await _userService.GetUserByEmail(model.Email);
 
         if (user == null)
         {
@@ -126,7 +128,7 @@ public class UserController : ControllerBase
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        var user = await _userRepository.GetUserByIdAsync(int.Parse(userId));
+        var user = await _userService.GetUserById(int.Parse(userId));
 
         var token = await _changeEmailService.GenerateChangeEmailToken(int.Parse(userId));
 
@@ -146,7 +148,7 @@ public class UserController : ControllerBase
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        var user = await _userRepository.GetUserByIdAsync(int.Parse(userId));
+        var user = await _userService.GetUserById(int.Parse(userId));
 
         if(user != null)
         {
@@ -179,7 +181,7 @@ public class UserController : ControllerBase
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel model)
     {
-        var user = await _userRepository.GetUserByEmailAsync(model.Email);
+        var user = await _userService.GetUserByEmail(model.Email);
 
         if (user != null && user.PasswordResetTokenExpiration > DateTime.UtcNow && model.Token == user.PasswordResetToken)
         {
@@ -189,7 +191,7 @@ public class UserController : ControllerBase
             user.PasswordResetToken = null;
             user.PasswordResetTokenExpiration = null;
 
-            await _userRepository.UpdateUserAsync(user);
+            await _userService.UpdateUser(user);
 
             return Ok();
         }
@@ -222,7 +224,7 @@ public class UserController : ControllerBase
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        var user = await _userRepository.GetUserByIdAsync(int.Parse(userId));
+        var user = await _userService.GetUserById(int.Parse(userId));
 
         if(user == null)
         {
@@ -253,7 +255,7 @@ public class UserController : ControllerBase
             return BadRequest("invalidToken");
         }
 
-        var user = await _userRepository.GetUserByIdAsync(int.Parse(userId));
+        var user = await _userService.GetUserById(int.Parse(userId));
 
         if (user == null)
         {
