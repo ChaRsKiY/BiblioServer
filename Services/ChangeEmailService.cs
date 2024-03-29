@@ -21,7 +21,7 @@ namespace BiblioServer.Services
 
             if (user != null)
             {
-                var token = Guid.NewGuid().ToString().Substring(0, 8); ;
+                var token = Guid.NewGuid().ToString().Substring(0, 7);
 
                 user.EmailChangeToken = token;
                 user.EmailChangeTokenExpiration = DateTime.UtcNow.AddHours(1);
@@ -62,7 +62,7 @@ namespace BiblioServer.Services
             user.NewChangingEmail = model.Email;
             await _userRepository.UpdateUserAsync(user);
 
-            string callbackUrl = $"http://localhost:3001/emailchangeconfirm?email={user.Email}&verificationCode={verificationCode}";
+            string callbackUrl = $"http://localhost:3000/emailchangeconfirm?email={user.Email}&verificationCode={verificationCode}";
 
             _emailService.SendChangeEmailVerificationEmail(model.Email, user.UserName, verificationCode, callbackUrl);
 

@@ -21,8 +21,7 @@ public class AddBookModel
     [MaxLength(255)]
     public string? Description { get; set; }
 
-    [DataType(DataType.Date)]
-    public DateTime? Year { get; set; }
+    public int? Year { get; set; }
 
     public IFormFile? Content { get; set; }
 }

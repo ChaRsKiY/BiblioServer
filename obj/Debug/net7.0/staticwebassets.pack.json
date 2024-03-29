@@ -5,56 +5,32 @@
       "PackagePath": "staticwebassets/.DS_Store"
     },
     {
-      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/avatars/0fd0eed7-d2b6-4379-ae97-eb0ff2192f66.gif",
-      "PackagePath": "staticwebassets/avatars/0fd0eed7-d2b6-4379-ae97-eb0ff2192f66.gif"
-    },
-    {
-      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/avatars/480b55d1-5a7d-4204-bfe6-cc4f47c545cc.gif",
-      "PackagePath": "staticwebassets/avatars/480b55d1-5a7d-4204-bfe6-cc4f47c545cc.gif"
-    },
-    {
-      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/avatars/6bef5207-ec6f-4413-982a-c25a8365f72c.gif",
-      "PackagePath": "staticwebassets/avatars/6bef5207-ec6f-4413-982a-c25a8365f72c.gif"
-    },
-    {
-      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/avatars/7c0e1665-cdfe-4cf9-ac58-0fbbbd3d8586.gif",
-      "PackagePath": "staticwebassets/avatars/7c0e1665-cdfe-4cf9-ac58-0fbbbd3d8586.gif"
-    },
-    {
-      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/avatars/9d92848e-10c4-4212-bc9b-3093aa3a6b4b.gif",
-      "PackagePath": "staticwebassets/avatars/9d92848e-10c4-4212-bc9b-3093aa3a6b4b.gif"
-    },
-    {
-      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/avatars/d0e5b5cf-4138-4b93-9360-08990b268ceb.gif",
-      "PackagePath": "staticwebassets/avatars/d0e5b5cf-4138-4b93-9360-08990b268ceb.gif"
-    },
-    {
       "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/avatars/da81539e-01c5-4a95-96ea-76dcbd45b6ac.gif",
       "PackagePath": "staticwebassets/avatars/da81539e-01c5-4a95-96ea-76dcbd45b6ac.gif"
     },
     {
-      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/avatars/standart.jpg",
-      "PackagePath": "staticwebassets/avatars/standart.jpg"
+      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/covers/060511c5-8a51-4740-8c2b-6035bead1e27.jpg",
+      "PackagePath": "staticwebassets/covers/060511c5-8a51-4740-8c2b-6035bead1e27.jpg"
     },
     {
-      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/covers/19327d44-45dc-40d4-ad91-08a4a1b47bdf.jpg",
-      "PackagePath": "staticwebassets/covers/19327d44-45dc-40d4-ad91-08a4a1b47bdf.jpg"
+      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/covers/1285f1b5-bdbb-448c-ab04-9c0eb71a58a0.png",
+      "PackagePath": "staticwebassets/covers/1285f1b5-bdbb-448c-ab04-9c0eb71a58a0.png"
     },
     {
-      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/covers/31defcbf-c805-48da-bc77-dbb53c783edc.jpeg",
-      "PackagePath": "staticwebassets/covers/31defcbf-c805-48da-bc77-dbb53c783edc.jpeg"
+      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/covers/15173184-521b-44d3-9391-8ad93e0df712.jpg",
+      "PackagePath": "staticwebassets/covers/15173184-521b-44d3-9391-8ad93e0df712.jpg"
     },
     {
-      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/covers/5b0a1faa-df8b-4ce8-9406-114b5ee92d18.jpeg",
-      "PackagePath": "staticwebassets/covers/5b0a1faa-df8b-4ce8-9406-114b5ee92d18.jpeg"
+      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/covers/46343022-bd54-4b65-9211-4960ce2aba16.jpeg",
+      "PackagePath": "staticwebassets/covers/46343022-bd54-4b65-9211-4960ce2aba16.jpeg"
     },
     {
-      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/covers/71b038e3-4c53-47dd-8199-ce50f4fde93e.jpg",
-      "PackagePath": "staticwebassets/covers/71b038e3-4c53-47dd-8199-ce50f4fde93e.jpg"
+      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/covers/6629a6fd-aeb2-4b7c-8caa-95c44222ad10.jpeg",
+      "PackagePath": "staticwebassets/covers/6629a6fd-aeb2-4b7c-8caa-95c44222ad10.jpeg"
     },
     {
-      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/covers/7747d1a8-9860-4286-9ea9-c96e97e835a5.jpg",
-      "PackagePath": "staticwebassets/covers/7747d1a8-9860-4286-9ea9-c96e97e835a5.jpg"
+      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/covers/a5883110-790a-4bc7-90b7-fc38283fea80.png",
+      "PackagePath": "staticwebassets/covers/a5883110-790a-4bc7-90b7-fc38283fea80.png"
     },
     {
       "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/covers/b8f62993-abab-4ea2-a47c-a45e61056816.jpg",
@@ -65,36 +41,40 @@
       "PackagePath": "staticwebassets/covers/c33ce33e-c37b-4125-9edb-372ef45c2cd8.jpg"
     },
     {
+      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/covers/d43f4df6-6d04-4ec0-a535-85d9b30fc282.jpeg",
+      "PackagePath": "staticwebassets/covers/d43f4df6-6d04-4ec0-a535-85d9b30fc282.jpeg"
+    },
+    {
+      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/covers/e1c1ead9-c73f-49b0-ae73-1d7bb2e07677.jpg",
+      "PackagePath": "staticwebassets/covers/e1c1ead9-c73f-49b0-ae73-1d7bb2e07677.jpg"
+    },
+    {
+      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/covers/ea8833e4-602f-47a2-93b2-8cd7bf3a8ff0.png",
+      "PackagePath": "staticwebassets/covers/ea8833e4-602f-47a2-93b2-8cd7bf3a8ff0.png"
+    },
+    {
+      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/covers/f72112a3-911b-42af-b4ad-9f53c40dc41c.jpg",
+      "PackagePath": "staticwebassets/covers/f72112a3-911b-42af-b4ad-9f53c40dc41c.jpg"
+    },
+    {
       "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/email.html",
       "PackagePath": "staticwebassets/email.html"
-    },
-    {
-      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/texts/220a142a-646d-482c-98cc-0bafdbd235bf.txt",
-      "PackagePath": "staticwebassets/texts/220a142a-646d-482c-98cc-0bafdbd235bf.txt"
-    },
-    {
-      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/texts/5064bcfe-6bc4-4336-ac60-d0c1f0af9edd.txt",
-      "PackagePath": "staticwebassets/texts/5064bcfe-6bc4-4336-ac60-d0c1f0af9edd.txt"
-    },
-    {
-      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/texts/6f77e172-b5ff-49b8-b773-aaef0c4ebf8b.txt",
-      "PackagePath": "staticwebassets/texts/6f77e172-b5ff-49b8-b773-aaef0c4ebf8b.txt"
-    },
-    {
-      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/texts/7ec78585-5990-453b-80e8-db44f6eaf4b9.txt",
-      "PackagePath": "staticwebassets/texts/7ec78585-5990-453b-80e8-db44f6eaf4b9.txt"
     },
     {
       "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/texts/8721ce4f-d283-4fae-b210-9534632b3963.rtf",
       "PackagePath": "staticwebassets/texts/8721ce4f-d283-4fae-b210-9534632b3963.rtf"
     },
     {
-      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/texts/980595f1-5145-40ac-b1ba-f0dab25418aa.txt",
-      "PackagePath": "staticwebassets/texts/980595f1-5145-40ac-b1ba-f0dab25418aa.txt"
-    },
-    {
       "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/texts/9d0e356b-73a9-4f48-ab21-1113b856a373.rtf",
       "PackagePath": "staticwebassets/texts/9d0e356b-73a9-4f48-ab21-1113b856a373.rtf"
+    },
+    {
+      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/texts/b07a5369-27e1-4f79-9d42-53ceee2bb3db.docx",
+      "PackagePath": "staticwebassets/texts/b07a5369-27e1-4f79-9d42-53ceee2bb3db.docx"
+    },
+    {
+      "Id": "/Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/wwwroot/texts/f8cc0a0a-33b7-4b29-bc3a-8c00309e9699.txt",
+      "PackagePath": "staticwebassets/texts/f8cc0a0a-33b7-4b29-bc3a-8c00309e9699.txt"
     },
     {
       "Id": "obj/Debug/net7.0/staticwebassets/msbuild.BiblioServer.Microsoft.AspNetCore.StaticWebAssets.props",

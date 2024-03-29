@@ -226,6 +226,6 @@ C:/Users/mrbla/Source/Repos/Biblio1/BiblioServer/obj/Debug/net7.0/ref/BiblioServ
 /Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/bin/Debug/net7.0/Microsoft.Extensions.DependencyModel.dll
 /Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/bin/Debug/net7.0/Mono.TextTemplating.dll
 /Users/charskiy/Downloads/Biblio-AndreyBranch/BiblioServer/bin/Debug/net7.0/System.CodeDom.dll
-C:\Users\mrbla\Source\Repos\BiblioProject\obj\Debug\net7.0\BiblioServer.dll
-C:\Users\mrbla\Source\Repos\BiblioProject\obj\Debug\net7.0\refint\BiblioServer.dll
-C:\Users\mrbla\Source\Repos\BiblioProject\obj\Debug\net7.0\BiblioServer.pdb
+C:/Users/mrbla/Source/Repos/BiblioProject/obj/Debug/net7.0/BiblioServer.dll
+C:/Users/mrbla/Source/Repos/BiblioProject/obj/Debug/net7.0/refint/BiblioServer.dll
+C:/Users/mrbla/Source/Repos/BiblioProject/obj/Debug/net7.0/BiblioServer.pdb

@@ -74,6 +74,19 @@ namespace BiblioServer.Repositories
             return await _context.Books.OrderByDescending(q => q.ReadCounter).Take(5).ToListAsync();
         }
 
+        public async Task<int> GetBooksCountAsync()
+        {
+            return await _context.Books.CountAsync();
+        }
+
+        public async Task<int> GetDownloadsCountAsync()
+        {
+            int totalDownloads = await _context.Books
+                                    .Select(b => b.DownloadCount ?? 0)
+                                    .SumAsync();
+            return totalDownloads;
+        }
+
         public async Task<IEnumerable<Book>> GetTrendingBooksAsync()
         {
             return await _context.Books.OrderByDescending(q => q.Rating).Take(5).ToListAsync();
@@ -82,6 +95,25 @@ namespace BiblioServer.Repositories
         public async Task<Book> GetBookByIdAsync(int id)
         {
             return await _context.Books.FindAsync(id);
+        }
+
+        public async Task<object> GetBooksByUserId(int userId, int page, int pageSize)
+        {
+            var query = _context.Books.Where(b => b.UserId == userId);
+
+            var totalBooks = await query.CountAsync();
+
+            var totalPages = (int)Math.Ceiling((double)totalBooks / pageSize);
+
+            var books = await query.Skip((page - 1) * pageSize)
+                                   .Take(pageSize)
+                                   .ToListAsync();
+
+            return new
+            {
+                Books = books,
+                TotalPages = totalPages
+            };
         }
 
         public async Task AddBookAsync(Book book)

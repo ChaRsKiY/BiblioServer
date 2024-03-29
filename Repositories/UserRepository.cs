@@ -56,6 +56,47 @@ namespace BiblioServer.Repositories
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<object> GetAllUsersAsync(int page, int pageSize)
+        {
+            var query = _context.Users
+                .Select(u => new User { UserName = u.UserName, Name = u.Name, Email = u.Email, Id = u.Id, IsAdmin = u.IsAdmin });
+
+            var totalUsers = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalUsers / (double)pageSize);
+
+            if (page < 1 || page > totalPages)
+            {
+                page = 1;
+            }
+
+            var users = await query.Skip((page - 1) * pageSize)
+                                   .Take(pageSize)
+                                   .ToListAsync();
+
+            return new { users, totalPages };
+        }
+
+        public async Task<object> GetAllAdminsAsync(int page, int pageSize)
+        {
+            var query = _context.Users
+                .Select(u => new User { UserName = u.UserName, Name = u.Name, Email = u.Email, Id = u.Id, IsAdmin = u.IsAdmin }).Where(u => u.IsAdmin == true);
+
+            var totalUsers = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalUsers / (double)pageSize);
+
+            if (page < 1 || page > totalPages)
+            {
+                page = 1;
+            }
+
+            var users = await query.Skip((page - 1) * pageSize)
+                                   .Take(pageSize)
+                                   .ToListAsync();
+
+            return new { users, totalPages };
+        }
+
     }
 }
 

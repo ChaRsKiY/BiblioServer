@@ -18,6 +18,8 @@ namespace BiblioServer.Repositories
         Task UpdateUserAsync(User user);
         Task DeleteUserAsync(User user);
         Task<User> GetUserByPasswordResetTokenAsync(string token);
+        Task<object> GetAllUsersAsync(int page, int pageSize);
+        Task<object> GetAllAdminsAsync(int page, int pageSize);
     }
 }
 

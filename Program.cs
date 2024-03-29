@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using BiblioServer.Middlewares;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using BiblioServer.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,12 +23,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient();
 
 ///// Dependency Injection - Custom Services /////
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IGenreRepository, GenreRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
+builder.Services.AddScoped<IDownloadReadUserRepository, DownloadReadUserRepository>();
+builder.Services.AddScoped<IRatingRepository, RatingRepository>();
 
 string securityKey = builder.Configuration["JwtSettings:SecurityKey"] ?? throw new InvalidOperationException("JwtSettings:SecurityKey is missing in configuration.");
 builder.Services.AddScoped<ITokenService, TokenService>(provider => new TokenService(securityKey));
@@ -39,6 +46,13 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IResetPasswordService, ResetPasswordService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
 builder.Services.AddScoped<IChangeEmailService, ChangeEmailService>();
+builder.Services.AddScoped<IBookmarkService, BookmarkService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IActivityService, ActivityService>();
+builder.Services.AddScoped<IDownloadReadUserService, DownloadReadUserService>();
+builder.Services.AddScoped<IRatingService, RatingService>();
+
 
 builder.Services.AddScoped<IBookService, BookService>();
 
@@ -57,11 +71,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 };
             });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminAuthorize", policy =>
+    {
+        policy.RequireClaim(ClaimTypes.Role, "Admin");
+    });
+});
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", builder =>
     {
-        builder.WithOrigins("http://localhost:3001") //Front-End url for cors 
+        builder.WithOrigins("http://localhost:3000") //Front-End url for cors 
                .AllowAnyHeader()
                .AllowAnyMethod();
     });

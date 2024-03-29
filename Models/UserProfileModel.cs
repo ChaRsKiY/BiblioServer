@@ -17,6 +17,8 @@ public class UserProfileModel
 
     public string? Avatar { get; set; }
 
+    public bool? IsAdmin { get; set; }
+
     public DateTime? RegistrationDate { get; set; }
 
     public IFormFile? AvatarFile { get; set; }

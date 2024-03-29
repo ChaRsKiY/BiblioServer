@@ -12,6 +12,9 @@ namespace BiblioServer.Repositories
         Task<bool> DeleteBookAsync(int id);
         Task<IEnumerable<Book>> GetTrendingBooksAsync();
         Task<IEnumerable<Book>> GetPopularBooksAsync();
+        Task<int> GetBooksCountAsync();
+        Task<int> GetDownloadsCountAsync();
+        Task<object> GetBooksByUserId(int userId, int page, int pageSize);
     }
 }
 

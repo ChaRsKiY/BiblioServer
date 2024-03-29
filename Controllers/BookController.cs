@@ -1,7 +1,8 @@
 ﻿using System.Security.Claims;
-using System.Text;
 using BiblioServer.Models;
+using BiblioServer.Interfaces;
 using BiblioServer.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 
@@ -10,10 +11,12 @@ using Microsoft.AspNetCore.StaticFiles;
 public class BookController : ControllerBase
 {
     private readonly IBookService _bookService;
+    private readonly IDownloadReadUserService _downloadReadUserService;
 
-    public BookController(IBookService bookService)
+    public BookController(IBookService bookService, IDownloadReadUserService downloadReadUserService)
     {
         _bookService = bookService;
+        _downloadReadUserService = downloadReadUserService;
     }
 
     [HttpGet]
@@ -74,13 +77,28 @@ public class BookController : ControllerBase
         return Ok(book);
     }
 
+    [HttpGet("get-books/{page}")]
+    [Authorize]
+    public async Task<IActionResult> GetBooksByUserId([FromRoute] int page)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var books = await _bookService.GetBooksByUserId(int.Parse(userId), page);
+
+        if (books == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(books);
+    }
+
     [HttpPost]
-    //[Authorize]
+    [Authorize]
     public async Task<IActionResult> AddBook([FromForm] AddBookModel createModel)
     {
         try
         {
-            var userId = 0;//User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (userId == null)
             {
@@ -98,12 +116,12 @@ public class BookController : ControllerBase
                 }
             }
 
-            await _bookService.AddBookAsync(userId, createModel);
+            var response = await _bookService.AddBookAsync(Int32.Parse(userId), createModel);
 
-            //if (response == "usernameExist" || response == "userExist")
-            //{
-            //    return BadRequest(response);
-            //}
+            if (response == "userExist")
+            {
+                return BadRequest(response);
+            }
 
             return Ok();
         }
@@ -114,7 +132,8 @@ public class BookController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateBook(int id, [FromBody] Book book)
+    [Authorize]
+    public async Task<IActionResult> UpdateBook(int id, [FromForm] Book book)
     {
         var updatedBook = await _bookService.UpdateBookAsync(id, book);
 
@@ -126,7 +145,29 @@ public class BookController : ControllerBase
         return Ok(updatedBook);
     }
 
+    [HttpPut("set-as-read/{bookId}")]
+    [Authorize]
+    public async Task<IActionResult> SetAsRead(int bookId)
+    {
+        try
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null)
+                return BadRequest();
+
+            await _downloadReadUserService.SetBookAsRead(int.Parse(userId), bookId);
+
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e);
+        }
+    }
+
     [HttpDelete("{id}")]
+    [Authorize(policy: "AdminAuthorize")]
     public async Task<IActionResult> DeleteBook(int id)
     {
         var result = await _bookService.DeleteBookAsync(id);
@@ -158,6 +199,39 @@ public class BookController : ControllerBase
             TotalPages = totalPages,
             CurrentPage = page
         };
+    }
+
+    [HttpGet("download-content/{bookId}")]
+    [Authorize]
+    public async Task<IActionResult> DownloadFile([FromRoute] int bookId)
+    {
+        var book = await _bookService.GetBookByIdAsync(bookId);
+        var filePath = "wwwroot/texts/" + book.Content;
+
+        Response.Headers.Add("Content-Disposition", $"attachment; filename=\"{book.Title}\"");
+
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (userId == null)
+            return BadRequest();
+
+        await _downloadReadUserService.SetBookAsDownloaded(int.Parse(userId), bookId);
+
+        try
+        {
+            var memoryStream = new MemoryStream();
+            using (var fileStream = new FileStream(filePath, FileMode.Open))
+            {
+                fileStream.CopyTo(memoryStream);
+            }
+            memoryStream.Position = 0;
+
+            return File(memoryStream, "application/octet-stream", book.Title);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 
     private List<string> ReadFileContent(string filePath, int page, int pageSize)

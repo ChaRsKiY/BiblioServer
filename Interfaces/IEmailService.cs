@@ -10,6 +10,7 @@ namespace BiblioServer.Services
         Task SendEmailChangeCode(string toEmail, string code);
         Task SendChangeEmailVerificationEmail(string toEmail, string username, string verificationCode, string callbackUrl);
         Task SendSuccessfullResetPasswordEmail(string toEmail);
+        Task SendCustomEmailAsync(SendEmailModel model);
     }
 }
 

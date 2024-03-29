@@ -13,7 +13,8 @@ namespace BiblioServer.Services
         Task<bool> IsEmailExists(string email);
         Task<bool> IsUsernameExists(string username);
         Task<User> GetUserById(int userId);
-        
+        Task<object> GetAllUsersAsync(int page);
+        Task<object> GetAllAdminsAsync(int page);
     }
 }
 

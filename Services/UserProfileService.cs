@@ -34,7 +34,8 @@ namespace BiblioServer.Services
                 Surname = user.Surname,
                 Bio = user.Bio,
                 Avatar = user.Avatar,
-                RegistrationDate = user.RegistrationDate
+                RegistrationDate = user.RegistrationDate,
+                IsAdmin = user.IsAdmin
             };
 
             return userProfile;
@@ -49,12 +50,15 @@ namespace BiblioServer.Services
             {
                 if (!string.IsNullOrEmpty(updateModel.UserName))
                 {
-                    if(await _userRepository.IsUsernameExistsAsync(updateModel.UserName))
+                    if(user.UserName.Trim() != updateModel.UserName)
                     {
-                        return "usernameExist";
-                    }
+                        if (await _userRepository.IsUsernameExistsAsync(updateModel.UserName))
+                        {
+                            return "usernameExist";
+                        }
 
-                    user.UserName = updateModel.UserName;
+                        user.UserName = updateModel.UserName;
+                    }
                 }
 
                 if (!string.IsNullOrEmpty(updateModel.Name))

@@ -1,4 +1,5 @@
 ﻿using System;
+using BiblioServer.Interfaces;
 using BiblioServer.Models;
 using BiblioServer.Repositories;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -12,12 +13,14 @@ namespace BiblioServer.Services
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
         private readonly IEmailService _emailService;
+        private readonly IActivityService _activityService;
 
-        public RegistrationService(IUserRepository userRepository, ITokenService tokenService, IEmailService emailService)
+        public RegistrationService(IActivityService activityService, IUserRepository userRepository, ITokenService tokenService, IEmailService emailService)
         {
             _userRepository = userRepository;
             _tokenService = tokenService;
             _emailService = emailService;
+            _activityService = activityService;
         }
 
         public async Task<string> RegisterUserAsync(UserRegistrationModel user)
@@ -49,9 +52,19 @@ namespace BiblioServer.Services
 
             await _userRepository.AddUserAsync(newUser);
 
-            string callbackUrl = $"http://localhost:3001/confirmation?email={user.Email}&verificationCode={verificationCode}";
+            string callbackUrl = $"http://localhost:3000/confirmation?email={user.Email}&verificationCode={verificationCode}";
 
             await _emailService.SendVerificationEmail(newUser, verificationCode, callbackUrl);
+
+            var activityModel = new ActivityModel
+            {
+                Email = newUser.Email,
+                Name = newUser.UserName,
+                Time = DateTime.Now,
+                Status = "Registered"
+            };
+
+            _activityService.AddActivity(activityModel);
 
             var token = _tokenService.GenerateJwtToken(newUser);
 
@@ -65,7 +78,7 @@ namespace BiblioServer.Services
 
             await _userRepository.UpdateUserAsync(user);
 
-            string callbackUrl = $"http://localhost:3001/confirmation?email={user.Email}&verificationCode={newVerificationCode}";
+            string callbackUrl = $"http://localhost:3000/confirmation?email={user.Email}&verificationCode={newVerificationCode}";
 
             await _emailService.SendVerificationEmail(user, newVerificationCode, callbackUrl);
         }

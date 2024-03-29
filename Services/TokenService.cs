@@ -20,10 +20,13 @@ namespace BiblioServer.Services
         {
             var credentials = new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha256);
 
+            bool isAdmin = user.IsAdmin ?? false;
+
             //Token data
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, isAdmin ? "Admin" : "User")
             };
 
             //Creating a token

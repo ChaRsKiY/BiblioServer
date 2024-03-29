@@ -24,6 +24,17 @@ namespace BiblioServer.Repositories
             await _context.Genres.AddAsync(model);
             await _context.SaveChangesAsync();
         }
+
+        public async Task DeleteGenreAsync(int id)
+        {
+            var genre = await _context.Genres.FindAsync(id);
+
+            if (genre == null)
+                return;
+
+            _context.Genres.Remove(genre);
+            await _context.SaveChangesAsync();
+        }
     }
 }
 

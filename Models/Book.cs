@@ -9,14 +9,17 @@ public class Book
     [Key]
     public int Id { get; set; }
 
+    [ForeignKey("UserId")]
+    public int UserId { get; set; }
+
+    public string UserName { get; set; }
+
     //Book name
     [MaxLength(60)]
     public string? Title { get; set; }
 
     [MaxLength(60)]
     public string? Author { get; set; }
-
-
 
     [ForeignKey("GenreId")]
     public int GenreId { get; set; }

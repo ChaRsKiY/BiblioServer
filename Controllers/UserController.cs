@@ -262,7 +262,7 @@ public class UserController : ControllerBase
             return BadRequest("userExist");
         }
 
-        return Ok(new { UserId = userId, UserName = user.UserName });
+        return Ok(new { UserId = userId, UserName = user.UserName, IsAdmin = user.IsAdmin, Avatar = user.Avatar });
     }
 
     //Get User Data Route
@@ -278,6 +278,20 @@ public class UserController : ControllerBase
         }
 
         var userProfile = await _userProfileService.GetUserProfileAsync(int.Parse(userId));
+
+        if (userProfile == null)
+        {
+            return NotFound("User not found");
+        }
+
+        return Ok(userProfile);
+    }
+
+    [HttpGet("userdata/{id}")]
+    [Authorize(policy: "AdminAuthorize")]
+    public async Task<IActionResult> UserDataAdmin([FromRoute] int id)
+    {
+        var userProfile = await _userProfileService.GetUserProfileAsync(id);
 
         if (userProfile == null)
         {
@@ -342,21 +356,46 @@ public class UserController : ControllerBase
         }
     }
 
-    //Delete User By Token Route 
-    [HttpDelete("delete")]
-    [Authorize]
-    public async Task<IActionResult> DeleteUser()
+    [HttpPut("update/{id}")]
+    [Authorize(policy: "AdminAuthorize")]
+    public async Task<IActionResult> UpdateAdminProfile([FromRoute] int id, [FromForm] UserUpdateModel updateModel)
     {
         try
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (userId == null)
+            if (updateModel.AvatarFile != null)
             {
-                return BadRequest("Invalid or missing token");
+                var supportedTypes = new[] { "jpeg", "jpg", "png", "webp", "gif" };
+                var fileExtension = Path.GetExtension(updateModel.AvatarFile.FileName).TrimStart('.');
+
+                if (!supportedTypes.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
+                {
+                    return BadRequest("InvalidFileType");
+                }
             }
 
-            await _userProfileService.DeleteUserAsync(int.Parse(userId));
+            var response = await _userProfileService.UpdateUserProfileAsync(id, updateModel);
+
+            if (response == "usernameExist" || response == "userExist")
+            {
+                return BadRequest(response);
+            }
+
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal Server Error: {ex.Message}");
+        }
+    }
+
+    //Delete User By Token Route 
+    [HttpDelete("delete/{id}")]
+    [Authorize(policy: "AdminAuthorize")]
+    public async Task<IActionResult> DeleteUser([FromRoute] int id)
+    {
+        try
+        {
+            await _userProfileService.DeleteUserAsync(id);
 
             return Ok("User deleted successfully");
         }
@@ -364,6 +403,30 @@ public class UserController : ControllerBase
         {
             return StatusCode(500, $"Internal Server Error: {ex.Message}");
         }
+    }
+
+    [HttpGet("{page}")]
+    [Authorize(policy: "AdminAuthorize")]
+    public async Task<IActionResult> GetAllUsers([FromRoute] int page)
+    {
+        var data = await _userService.GetAllUsersAsync(page);
+
+        if (data == null)
+            return BadRequest();
+
+        return Ok(data);
+    }
+
+    [HttpGet("admins/{page}")]
+    [Authorize(policy: "AdminAuthorize")]
+    public async Task<IActionResult> GetAllAdmins([FromRoute] int page)
+    {
+        var data = await _userService.GetAllAdminsAsync(page);
+
+        if (data == null)
+            return BadRequest();
+
+        return Ok(data);
     }
 
     //Function for get avatar route

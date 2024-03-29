@@ -37,15 +37,31 @@ namespace BiblioServer.Services
             var user = await _userRepository.IsUsernameExistsAsync(username);
             return user;
         }
+
         public async Task<User> GetUserById(int userId)
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
             return user;
         }
+
         public async Task UpdateUser(User user)
         {
             await _userRepository.UpdateUserAsync(user);
         }
+
+        public async Task<object> GetAllUsersAsync(int page)
+        {
+            int perpage = 7;
+            return await _userRepository.GetAllUsersAsync(page, perpage);
+        }
+
+        public async Task<object> GetAllAdminsAsync(int page)
+        {
+            int perpage = 7;
+            return await _userRepository.GetAllAdminsAsync(page, perpage);
+        }
+
+
     }
 }
 

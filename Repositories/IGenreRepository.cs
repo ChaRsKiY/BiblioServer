@@ -7,6 +7,7 @@ namespace BiblioServer.Repositories
     {
         Task<IEnumerable<Genre>> GetGenresAsync();
         Task CreateGenreAsync(Genre model);
+        Task DeleteGenreAsync(int id);
     }
 }
 
