@@ -41,7 +41,7 @@ namespace BiblioServer.Controllers
                     model = "ft:gpt-3.5-turbo-0125:personal::95KTzPPV"
                 };
 
-                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer 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");
+                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer ---");
 
                 var response = await _httpClient.PostAsJsonAsync("https://api.openai.com/v1/chat/completions", requestData);
 
